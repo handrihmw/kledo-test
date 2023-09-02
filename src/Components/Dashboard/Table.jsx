@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
+import { fetchData } from '../../Api';
 import DeleteModal from '../Modals/Delete';
 import EditModal from '../Modals/Edit';
 
 const UserTable = () => {
-  const [users] = useState([
-    { id: 1, nama: 'John Doe' },
-    { id: 2, nama: 'Alice Smith' },
-    { id: 3, nama: 'Bob Johnson' },
-  ]);
-
+  const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editedValue, setEditedValue] = useState('Initial Value');
+
+  useEffect(() => {
+    fetchData()
+      .then((response) => {
+        setUsers(response);
+      })
+      .catch((error) => {
+        console.error('Error fetching user data:', error);
+      });
+  }, []);
 
   const handleEditUser = (userId) => {
     setSelectedUserId(userId);
@@ -37,16 +43,6 @@ const UserTable = () => {
   return (
     <div className="container mx-auto py-6">
       <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {users.map((user) => (
             <tr key={user.id}>
